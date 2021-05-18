@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native'
 import { ApolloProvider } from '@apollo/client'
 import { client } from './Utils/ApolloClient'
 import Rooms from './Components/Rooms'
+import Chat from './Components/Chat'
 // import { AppLoading } from 'expo'
 import {
   useFonts,
@@ -24,7 +25,8 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <View style={styles.container}>
-        <Rooms/>
+        {/* <Rooms/> */}
+        <Chat/>
       </View>
     </ApolloProvider>
   )

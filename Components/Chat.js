@@ -1,49 +1,43 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import { StyleSheet, Text, View, Image } from 'react-native'
-import { USER_AND_ROOMS } from '../Utils/Queris'
+import { CHAT_INFO } from '../Utils/Queris'
 import ProfileSVG from "../assets/svg/profile.svg"
-import SearchSVG from "../assets/svg/search.svg"
-import RoomsSVG from "../assets/svg/rooms.svg"
+import PhoneSVG from "../assets/svg/phone.svg"
+import VideocallSVG from "../assets/svg/videocall.svg"
 
 export default function ExchangeRates () {
-  const { loading, error, data } = useQuery(USER_AND_ROOMS)
+  const { loading, error, data } = useQuery(CHAT_INFO, {
+    variables: {id: "2d011ef0-487d-4f26-ba8e-a9a5a28ff908"}
+  })
 
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Request Error</Text>
 
-  const rooms = data.usersRooms.rooms
-  
+  console.log(data.room.name)
+  const room = data.room
+
   return(
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Rooms</Text>
+        { room.roomPic
+          ? <Image
+            style={styles.roomImage}
+            source={{uri: room.roomPic}}
+            resizeMode='cover' />
+          : <ProfileSVG style={styles.roomImage}/>}
+
+          <View style={styles.roomHeaderTexts}>
+            <Text style={styles.roomName}>{room.name.substr(17)}</Text>
+            <Text style={styles.roomStatus}>Active now</Text>
+          </View>
+
         <View style={styles.svgsContainer}>
-          <SearchSVG style={styles.svgIcon, {marginRight:8}}/>
-          <RoomsSVG style={styles.svgIcon}/>
+          <PhoneSVG style={styles.svgIcon, {marginRight:8}}/>
+          <VideocallSVG style={styles.svgIcon}/>
         </View>
       </View>
 
-      <View style={styles.rooms}>
-        {rooms.map(room => (
-          <View style={styles.room} key={room.id}>
-
-            { room.roomPic
-            ? <Image
-              style={styles.roomImage}
-              source={{uri: room.roomPic}}
-              resizeMode='cover' />
-            : <ProfileSVG style={styles.roomImage}/>}
-
-            <View style={styles.roomTexts}>
-              <Text style={styles.roomTime}>10 m ago</Text>
-              <Text style={styles.roomName}>{room.name}</Text>
-              <Text style={styles.roomMessage}>Sample message</Text>
-            </View>
-
-          </View>
-        ))}
-      </View>
     </View>
   )
 }
@@ -99,9 +93,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 16,
   },
-  roomTexts: {
-    width: '80%',
-    justifyContent: 'center',
+  roomHeaderTexts: {
+    width: '50%',
+    marginBottom: -8,
+    padding: 0,
+    justifyContent: 'flex-end',
   },
   roomTime: {
     marginLeft: 'auto',
@@ -111,10 +107,12 @@ const styles = StyleSheet.create({
     color: '#9FA2B2',
   },
   roomName: {
-    width: '79%',
-    fontFamily: 'Poppins_500Medium',
+    color: '#5603AD',
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
   },
-  roomMessage: {
+  roomStatus: {
+    color: '#fff',
     fontFamily: 'Poppins_400Regular',
   },
   message: {

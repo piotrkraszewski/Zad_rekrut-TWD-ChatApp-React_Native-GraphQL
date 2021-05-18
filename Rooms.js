@@ -1,7 +1,8 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 import { USER_AND_ROOMS } from './Queris'
+import ProfileSVG from "./assets/svg/profile.svg";
 
 export default function ExchangeRates () {
   const { loading, error, data } = useQuery(USER_AND_ROOMS)
@@ -16,6 +17,12 @@ export default function ExchangeRates () {
     <View style={styles.container}>
       {rooms.map(room => (
         <View style={styles.room} key={room.id}>
+            { room.roomPic ? <Image
+              style={styles.image}
+              source={{uri: room.roomPic}}
+              resizeMode='cover' />
+            : <ProfileSVG width={64} height={64}/>}
+
           <Text style={styles.roomName}>{room.name}</Text>
         </View>
       ))}
@@ -41,7 +48,15 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
   },
+  image: {
+    width: 64,
+    height: 64,
+    borderRadius: 50
+  },
   roomName: {
-    fontFamily: 'Poppins_700Bold',
-  }
+    fontFamily: 'Poppins_500Medium',
+  },
+  message: {
+    fontFamily: 'Poppins_400Regular',
+  },
 })

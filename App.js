@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import { ApolloProvider } from '@apollo/client'
-import { client } from './ApolloClient'
-import Rooms from './Rooms'
-import { AppLoading } from 'expo'
+import { client } from './Utils/ApolloClient'
+import Rooms from './Components/Rooms'
+// import { AppLoading } from 'expo'
 import {
   useFonts,
   Poppins_400Regular,
@@ -21,8 +21,6 @@ export default function App() {
     Poppins_700Bold,
   })
 
-  // if(!fontsLoaded) return <AppLoading />
-
   return (
     <ApolloProvider client={client}>
       <View style={styles.container}>
@@ -31,6 +29,7 @@ export default function App() {
     </ApolloProvider>
   )
 }
+
 
 const styles = StyleSheet.create({
   container: {

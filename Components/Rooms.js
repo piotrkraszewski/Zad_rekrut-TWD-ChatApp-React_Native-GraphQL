@@ -1,10 +1,10 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import { StyleSheet, Text, View, Image } from 'react-native'
-import { USER_AND_ROOMS } from './Queris'
-import ProfileSVG from "./assets/svg/profile.svg"
-import SearchSVG from "./assets/svg/search.svg"
-import RoomsSVG from "./assets/svg/rooms.svg"
+import { USER_AND_ROOMS } from '../Utils/Queris'
+import ProfileSVG from "../assets/svg/profile.svg"
+import SearchSVG from "../assets/svg/search.svg"
+import RoomsSVG from "../assets/svg/rooms.svg"
 
 export default function ExchangeRates () {
   const { loading, error, data } = useQuery(USER_AND_ROOMS)

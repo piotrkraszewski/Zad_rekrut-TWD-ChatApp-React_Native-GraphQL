@@ -11,15 +11,31 @@ import { useAppContext } from './Contexts/AppContext'
 
 
 export default function ExchangeRates ({navigation}) {
-  const { currentRoomID } = useAppContext()
+  const { currentRoomID, userData } = useAppContext()
   const { loading, error, data } = useQuery(CHAT_INFO, {
     variables: {id: currentRoomID}
   })
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    data && setMessages(room.messages)
+    if(data){
+      const messages = []
+      data.room.messages.map((message) => {
+        messages.push({
+          _id: message.id,
+          text: message.body,
+          createdAt: message.insertedAt,
+          user: {
+            _id: message.user.id,
+            name: message.user.firstName,
+            avatar: message.user.profilePic,
+          }
+        })
+      })
+      setMessages(messages)
+    }
   }, [data])
+
   // useEffect(() => console.log('messages', messages), [messages])
 
   const onSend = useCallback((messages = []) => {
@@ -42,7 +58,6 @@ export default function ExchangeRates ({navigation}) {
           marginLeft: -5,
           borderRadius: 50,
         }}
-        // style={styles.roomTouch}
         underlayColor='#a6cce7'
         onPress={() => {navigation.navigate('Rooms')}}
       >
@@ -56,16 +71,16 @@ export default function ExchangeRates ({navigation}) {
         />
       </TouchableHighlight>
 
-        { room.roomPic
+        { room.messages[0]
         ? <Image
           style={styles.roomImage}
-          source={{uri: room.roomPic}}
+          source={{uri: room.messages[0].user.profilePic}}
           resizeMode='cover' />
         : <ProfileSVG width={44} height={44} style={styles.roomImage}/>}
 
         <View style={styles.roomHeaderTexts}>
           <Text style={styles.roomName} numberOfLines={1}>
-            {room.name.substr(13)}
+            The Widlarz Group
           </Text>
           <Text style={styles.roomStatus}>Active now</Text>
         </View>
@@ -76,19 +91,20 @@ export default function ExchangeRates ({navigation}) {
         </View>
       </View>
 
-      {/* <GiftedChat
-        // key={room.messages.id}
+      <GiftedChat
         messages={messages}
-        // onSend={messages => onSend(messages)}
+        onSend={messages => onSend(messages)}
         user={{
-          _id: room.user.id,
-          name: 'Ginny'
+          _id: userData.id,
+          name: userData.firstName,
+          avatar: userData.profilePic,
         }}
-      /> */}
+      />
 
     </View>
   )
 }
+
 
 
 const styles = StyleSheet.create({
@@ -139,13 +155,13 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 50,
-    marginRight: 16,
+    marginRight: 10,
     marginLeft: 5,
   },
   roomHeaderTexts: {
-    width: '43%',
-    marginBottom: -8,
-    marginRight: 12,
+    width: '45%',
+    marginBottom: -6,
+    marginRight: 8,
     justifyContent: 'flex-end',
   },
   roomTime: {
@@ -157,10 +173,12 @@ const styles = StyleSheet.create({
   },
   roomName: {
     color: '#5603AD',
-    fontSize: 16,
+    fontSize: 15,
+    lineHeight: 24,
     fontFamily: 'Poppins_600SemiBold',
   },
   roomStatus: {
+    fontSize: 12,
     color: '#fff',
     fontFamily: 'Poppins_400Regular',
   },

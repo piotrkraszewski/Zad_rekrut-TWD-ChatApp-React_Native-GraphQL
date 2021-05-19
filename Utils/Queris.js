@@ -28,13 +28,12 @@ export const CHAT_INFO = gql`
         body
         user {
           id
+          firstName
+          profilePic
         }
         insertedAt
       }
       name
-      user {
-        id
-      }
       roomPic
     }
   }

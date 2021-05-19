@@ -7,18 +7,20 @@ import PhoneSVG from "../assets/svg/phone.svg"
 import VideocallSVG from "../assets/svg/videocall.svg"
 import ArrowSVG from "../assets/svg/arrow.svg"
 import { GiftedChat } from 'react-native-gifted-chat'
+import { useAppContext } from './Contexts/AppContext'
 
 
 export default function ExchangeRates ({navigation}) {
+  const { currentRoomID } = useAppContext()
   const { loading, error, data } = useQuery(CHAT_INFO, {
-    variables: {id: "2d011ef0-487d-4f26-ba8e-a9a5a28ff908"}
+    variables: {id: currentRoomID}
   })
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     data && setMessages(room.messages)
   }, [data])
-  useEffect(() => console.log('messages', messages), [messages])
+  // useEffect(() => console.log('messages', messages), [messages])
 
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
@@ -27,7 +29,6 @@ export default function ExchangeRates ({navigation}) {
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Request Error</Text>
 
-  // console.log(data.room.messages)
   const room = data.room
  //--------------------------------------
 
@@ -60,7 +61,7 @@ export default function ExchangeRates ({navigation}) {
           style={styles.roomImage}
           source={{uri: room.roomPic}}
           resizeMode='cover' />
-        : <ProfileSVG style={styles.roomImage}/>}
+        : <ProfileSVG width={44} height={44} style={styles.roomImage}/>}
 
         <View style={styles.roomHeaderTexts}>
           <Text style={styles.roomName} numberOfLines={1}>

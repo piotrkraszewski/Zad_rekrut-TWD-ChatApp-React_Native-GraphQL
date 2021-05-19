@@ -1,18 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { StyleSheet, Text, View, Image, TouchableHighlight } from 'react-native'
 import { USER_AND_ROOMS } from '../Utils/Queris'
 import ProfileSVG from "../assets/svg/profile.svg"
 import SearchSVG from "../assets/svg/search.svg"
 import RoomsSVG from "../assets/svg/rooms.svg"
+import { useAppContext } from './Contexts/AppContext'
+
 
 export default function ExchangeRates ({navigation}) {
   const { loading, error, data } = useQuery(USER_AND_ROOMS)
+  const { userData, setUserData, setCurrentRoomID } = useAppContext()
+
+
+  useEffect(() => {
+    data && !userData && setUserData(user)
+  }, [data])
+
 
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Request Error</Text>
 
   const rooms = data.usersRooms.rooms
+  const user = data.usersRooms.user
+
+
+  const handleRoomClick = (index) => {
+    setCurrentRoomID(rooms[index].id)
+    navigation.navigate('Chat')
+  }
 
   return(
     <View style={styles.container}>
@@ -24,13 +40,13 @@ export default function ExchangeRates ({navigation}) {
         </View>
       </View>
 
-      {rooms.map(room => (
-        <View style={styles.roomContainer}>
+      {rooms.map((room, index) => (
+        <View style={styles.roomContainer} key={room.id}>
         <TouchableHighlight
-          key={room.id}
+          id={room.id}
           style={styles.roomTouch}
           underlayColor='#bde0ff'
-          onPress={() => {navigation.navigate('Chat')}}>
+          onPress={() => handleRoomClick(index)}>
 
           <View style={styles.room} >
             { room.roomPic

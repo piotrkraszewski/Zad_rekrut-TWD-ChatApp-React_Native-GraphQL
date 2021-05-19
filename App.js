@@ -3,6 +3,7 @@ import { ApolloProvider } from '@apollo/client'
 import { client } from './Utils/ApolloClient'
 // import { AppLoading } from 'expo'
 import Routes from './Utils/Routes'
+import AppContext from './Components/Contexts/AppContext'
 import {
   useFonts,
   Poppins_400Regular,
@@ -23,7 +24,9 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <Routes/>
+      <AppContext>
+        <Routes/>
+      </AppContext>
     </ApolloProvider>
   )
 }

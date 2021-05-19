@@ -1,42 +1,89 @@
-import React from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableHighlight } from 'react-native'
 import { CHAT_INFO } from '../Utils/Queris'
 import ProfileSVG from "../assets/svg/profile.svg"
 import PhoneSVG from "../assets/svg/phone.svg"
 import VideocallSVG from "../assets/svg/videocall.svg"
+import ArrowSVG from "../assets/svg/arrow.svg"
+import { GiftedChat } from 'react-native-gifted-chat'
 
-export default function ExchangeRates () {
+
+export default function ExchangeRates ({navigation}) {
   const { loading, error, data } = useQuery(CHAT_INFO, {
     variables: {id: "2d011ef0-487d-4f26-ba8e-a9a5a28ff908"}
   })
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    data && setMessages(room.messages)
+  }, [data])
+  useEffect(() => console.log('messages', messages), [messages])
+
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+  }, [])
 
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Request Error</Text>
 
-  console.log(data.room.name)
+  // console.log(data.room.messages)
   const room = data.room
+ //--------------------------------------
+
 
   return(
     <View style={styles.container}>
       <View style={styles.header}>
-        { room.roomPic
-          ? <Image
-            style={styles.roomImage}
-            source={{uri: room.roomPic}}
-            resizeMode='cover' />
-          : <ProfileSVG style={styles.roomImage}/>}
+      <TouchableHighlight
+        style={{
+          padding: 5,
+          marginLeft: -5,
+          borderRadius: 50,
+        }}
+        // style={styles.roomTouch}
+        underlayColor='#a6cce7'
+        onPress={() => {navigation.navigate('Rooms')}}
+      >
+        <ArrowSVG
+          style={{
+            fill: 'black',
+            height: 28,
+            width: 28,
+            marginBottom: 2,
+          }}
+        />
+      </TouchableHighlight>
 
-          <View style={styles.roomHeaderTexts}>
-            <Text style={styles.roomName}>{room.name.substr(17)}</Text>
-            <Text style={styles.roomStatus}>Active now</Text>
-          </View>
+        { room.roomPic
+        ? <Image
+          style={styles.roomImage}
+          source={{uri: room.roomPic}}
+          resizeMode='cover' />
+        : <ProfileSVG style={styles.roomImage}/>}
+
+        <View style={styles.roomHeaderTexts}>
+          <Text style={styles.roomName} numberOfLines={1}>
+            {room.name.substr(13)}
+          </Text>
+          <Text style={styles.roomStatus}>Active now</Text>
+        </View>
 
         <View style={styles.svgsContainer}>
           <PhoneSVG style={styles.svgIcon, {marginRight:8}}/>
           <VideocallSVG style={styles.svgIcon}/>
         </View>
       </View>
+
+      {/* <GiftedChat
+        // key={room.messages.id}
+        messages={messages}
+        // onSend={messages => onSend(messages)}
+        user={{
+          _id: room.user.id,
+          name: 'Ginny'
+        }}
+      /> */}
 
     </View>
   )
@@ -88,15 +135,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   roomImage: {
-    width: 64,
-    height: 64,
+    width: 44,
+    height: 44,
     borderRadius: 50,
     marginRight: 16,
+    marginLeft: 5,
   },
   roomHeaderTexts: {
-    width: '50%',
+    width: '43%',
     marginBottom: -8,
-    padding: 0,
+    marginRight: 12,
     justifyContent: 'flex-end',
   },
   roomTime: {

@@ -1,19 +1,19 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableHighlight } from 'react-native'
 import { USER_AND_ROOMS } from '../Utils/Queris'
 import ProfileSVG from "../assets/svg/profile.svg"
 import SearchSVG from "../assets/svg/search.svg"
 import RoomsSVG from "../assets/svg/rooms.svg"
 
-export default function ExchangeRates () {
+export default function ExchangeRates ({navigation}) {
   const { loading, error, data } = useQuery(USER_AND_ROOMS)
 
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Request Error</Text>
 
   const rooms = data.usersRooms.rooms
-  
+
   return(
     <View style={styles.container}>
       <View style={styles.header}>
@@ -24,10 +24,15 @@ export default function ExchangeRates () {
         </View>
       </View>
 
-      <View style={styles.rooms}>
-        {rooms.map(room => (
-          <View style={styles.room} key={room.id}>
+      {rooms.map(room => (
+        <View style={styles.roomContainer}>
+        <TouchableHighlight
+          key={room.id}
+          style={styles.roomTouch}
+          underlayColor='#bde0ff'
+          onPress={() => {navigation.navigate('Chat')}}>
 
+          <View style={styles.room} >
             { room.roomPic
             ? <Image
               style={styles.roomImage}
@@ -40,10 +45,12 @@ export default function ExchangeRates () {
               <Text style={styles.roomName}>{room.name}</Text>
               <Text style={styles.roomMessage}>Sample message</Text>
             </View>
-
           </View>
-        ))}
-      </View>
+
+        </TouchableHighlight>
+        </View>
+      ))}
+
     </View>
   )
 }
@@ -80,15 +87,18 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
   },
-  rooms: {
-    width: '100%',
+  roomContainer: {
+    marginBottom: 12,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+  },
+  roomTouch: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
   },
   room: {
     height: 90,
     width: '100%',
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    marginBottom: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     flexDirection: 'row',

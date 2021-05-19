@@ -1,10 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native'
 import { ApolloProvider } from '@apollo/client'
 import { client } from './Utils/ApolloClient'
-import Rooms from './Components/Rooms'
-import Chat from './Components/Chat'
 // import { AppLoading } from 'expo'
+import Routes from './Utils/Routes'
 import {
   useFonts,
   Poppins_400Regular,
@@ -12,6 +10,7 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins'
+
 
 
 export default function App() {
@@ -24,18 +23,7 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}>
-      <View style={styles.container}>
-        {/* <Rooms/> */}
-        <Chat/>
-      </View>
+      <Routes/>
     </ApolloProvider>
   )
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E5E5E5',
-  },
-})

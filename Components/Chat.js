@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation, useSubscription } from '@apollo/client'
 import { StyleSheet, Text, View, Image, TouchableHighlight } from 'react-native'
-import { CHAT_INFO } from '../Utils/Queris'
+import { CHAT_INFO, SEND_MSG, CHAT_SUBSCRIPTION } from '../Utils/Queris'
 import ProfileSVG from "../assets/svg/profile.svg"
 import PhoneSVG from "../assets/svg/phone.svg"
 import VideocallSVG from "../assets/svg/videocall.svg"
@@ -15,6 +15,12 @@ export default function ExchangeRates ({navigation}) {
   const { loading, error, data } = useQuery(CHAT_INFO, {
     variables: {id: currentRoomID}
   })
+  const [addMessage] = useMutation(SEND_MSG)
+  // const { loading, error, data } = useSubscription(CHAT_SUBSCRIPTION, {
+  //   variables: {roomId: currentRoomID}
+  // })
+  // console.log(data)
+
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -36,10 +42,10 @@ export default function ExchangeRates ({navigation}) {
     }
   }, [data])
 
-  // useEffect(() => console.log('messages', messages), [messages])
 
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    addMessage({ variables: { body: messages[messages.length - 1].text, roomId: currentRoomID } })
   }, [])
 
   if (loading) return <Text>Loading...</Text>
@@ -94,6 +100,7 @@ export default function ExchangeRates ({navigation}) {
       <GiftedChat
         messages={messages}
         onSend={messages => onSend(messages)}
+        inverted={false}
         user={{
           _id: userData.id,
           name: userData.firstName,

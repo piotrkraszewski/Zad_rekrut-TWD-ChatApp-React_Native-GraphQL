@@ -38,3 +38,29 @@ export const CHAT_INFO = gql`
     }
   }
 `
+
+export const SEND_MSG = gql`
+  mutation ($body:String!, $roomId:String!){
+    sendMessage(body: $body, roomId: $roomId){
+      body
+      id
+      insertedAt
+      user{
+        id
+      }
+    }
+  }
+`
+
+export const CHAT_SUBSCRIPTION = gql`
+  subscription($roomId:String!) {
+    messageAdded(roomId: $roomId){
+      body
+      id
+      insertedAt
+      user{
+        id
+      }
+    }
+  }
+`
